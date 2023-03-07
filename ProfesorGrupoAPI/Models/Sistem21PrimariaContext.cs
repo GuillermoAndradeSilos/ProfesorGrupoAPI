@@ -27,15 +27,15 @@ public partial class Sistem21PrimariaContext : DbContext
 
     public virtual DbSet<Docente> Docente { get; set; }
 
+    public virtual DbSet<DocenteAlumno> DocenteAlumno { get; set; }
+
     public virtual DbSet<DocenteAsignatura> DocenteAsignatura { get; set; }
+
+    public virtual DbSet<DocenteGrupo> DocenteGrupo { get; set; }
 
     public virtual DbSet<Grupo> Grupo { get; set; }
 
     public virtual DbSet<Periodo> Periodo { get; set; }
-
-    public virtual DbSet<TipoAsignatura> TipoAsignatura { get; set; }
-
-    public virtual DbSet<Tipodocente> Tipodocente { get; set; }
 
     public virtual DbSet<Tutor> Tutor { get; set; }
 
@@ -54,9 +54,19 @@ public partial class Sistem21PrimariaContext : DbContext
 
             entity.ToTable("alumno");
 
+            entity.HasIndex(e => e.IdGrupo, "fkAlumnoGrupo_idx");
+
             entity.Property(e => e.Id).HasColumnType("int(11)");
             entity.Property(e => e.Direccion).HasMaxLength(200);
+            entity.Property(e => e.IdGrupo)
+                .HasColumnType("int(11)")
+                .HasColumnName("idGrupo");
+            entity.Property(e => e.Matricula).HasMaxLength(10);
             entity.Property(e => e.Nombre).HasMaxLength(200);
+
+            entity.HasOne(d => d.IdGrupoNavigation).WithMany(p => p.Alumno)
+                .HasForeignKey(d => d.IdGrupo)
+                .HasConstraintName("fkAlumnoGrupo");
         });
 
         modelBuilder.Entity<AlumnoTutor>(entity =>
@@ -77,7 +87,6 @@ public partial class Sistem21PrimariaContext : DbContext
 
             entity.HasOne(d => d.IdAlumnoNavigation).WithMany(p => p.AlumnoTutor)
                 .HasForeignKey(d => d.IdAlumno)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fkAlumno");
 
             entity.HasOne(d => d.IdTutorNavigation).WithMany(p => p.AlumnoTutor)
@@ -92,18 +101,11 @@ public partial class Sistem21PrimariaContext : DbContext
 
             entity.ToTable("asignatura");
 
-            entity.HasIndex(e => e.IdTipo, "fkAsignatura_Tipo_idx");
-
             entity.Property(e => e.Id)
                 .HasColumnType("int(11)")
                 .HasColumnName("id");
-            entity.Property(e => e.IdTipo).HasColumnType("int(11)");
             entity.Property(e => e.Nombre).HasMaxLength(200);
-
-            entity.HasOne(d => d.IdTipoNavigation).WithMany(p => p.Asignatura)
-                .HasForeignKey(d => d.IdTipo)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fkAsignatura_Tipo");
+            entity.Property(e => e.TipoAsignatura).HasColumnType("int(11)");
         });
 
         modelBuilder.Entity<Calificacion>(entity =>
@@ -132,7 +134,6 @@ public partial class Sistem21PrimariaContext : DbContext
 
             entity.HasOne(d => d.IdAlumnoNavigation).WithMany(p => p.Calificacion)
                 .HasForeignKey(d => d.IdAlumno)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fkCal_Alumno");
 
             entity.HasOne(d => d.IdAsignaturaNavigation).WithMany(p => p.Calificacion)
@@ -181,28 +182,64 @@ public partial class Sistem21PrimariaContext : DbContext
 
             entity.ToTable("docente");
 
-            entity.HasIndex(e => e.IdTipoDocente, "fkDocente_TipoDocente_idx");
+            entity.HasIndex(e => e.IdUsuario, "fkDocente_usuario_idx");
 
-            entity.HasIndex(e => e.Idusuario, "fkDocente_usuario_idx");
+            entity.Property(e => e.Id).HasColumnType("int(11)");
+            entity.Property(e => e.ApellidoMaterno).HasMaxLength(45);
+            entity.Property(e => e.ApellidoPaterno).HasMaxLength(45);
+            entity.Property(e => e.Correo).HasMaxLength(60);
+            entity.Property(e => e.Edad).HasColumnType("int(11)");
+            entity.Property(e => e.IdUsuario).HasColumnType("int(11)");
+            entity.Property(e => e.Nombre).HasMaxLength(45);
+            entity.Property(e => e.Telefono)
+                .HasMaxLength(10)
+                .IsFixedLength();
+            entity.Property(e => e.TipoDocente).HasColumnType("int(11)");
+
+            entity.HasOne(d => d.IdUsuarioNavigation).WithMany(p => p.Docente)
+                .HasForeignKey(d => d.IdUsuario)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fkDocente_usuario");
+        });
+
+        modelBuilder.Entity<DocenteAlumno>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("docente_alumno");
+
+            entity.HasIndex(e => e.IdAlumno, "fkAlumno_Docente_idx");
+
+            entity.HasIndex(e => e.IdDocente, "fkDocente_idx");
+
+            entity.HasIndex(e => e.IdPeriodo, "fkPeriodoGrupo_idx");
 
             entity.Property(e => e.Id)
                 .HasColumnType("int(11)")
                 .HasColumnName("id");
-            entity.Property(e => e.IdTipoDocente).HasColumnType("int(11)");
-            entity.Property(e => e.Idusuario)
+            entity.Property(e => e.IdAlumno)
                 .HasColumnType("int(11)")
-                .HasColumnName("idusuario");
-            entity.Property(e => e.Nombre).HasMaxLength(100);
+                .HasColumnName("idAlumno");
+            entity.Property(e => e.IdDocente)
+                .HasColumnType("int(11)")
+                .HasColumnName("idDocente");
+            entity.Property(e => e.IdPeriodo)
+                .HasColumnType("int(11)")
+                .HasColumnName("idPeriodo");
 
-            entity.HasOne(d => d.IdTipoDocenteNavigation).WithMany(p => p.Docente)
-                .HasForeignKey(d => d.IdTipoDocente)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fkDocente_TipoDocente");
+            entity.HasOne(d => d.IdAlumnoNavigation).WithMany(p => p.DocenteAlumno)
+                .HasForeignKey(d => d.IdAlumno)
+                .HasConstraintName("fkAlumno_Docente");
 
-            entity.HasOne(d => d.IdusuarioNavigation).WithMany(p => p.Docente)
-                .HasForeignKey(d => d.Idusuario)
+            entity.HasOne(d => d.IdDocenteNavigation).WithMany(p => p.DocenteAlumno)
+                .HasForeignKey(d => d.IdDocente)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fkDocente_usuario");
+                .HasConstraintName("fkDocente_Grupo_Alumno");
+
+            entity.HasOne(d => d.IdPeriodoNavigation).WithMany(p => p.DocenteAlumno)
+                .HasForeignKey(d => d.IdPeriodo)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fkPeriodoGrupo");
         });
 
         modelBuilder.Entity<DocenteAsignatura>(entity =>
@@ -232,29 +269,56 @@ public partial class Sistem21PrimariaContext : DbContext
                 .HasConstraintName("fkDocente");
         });
 
+        modelBuilder.Entity<DocenteGrupo>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("docente_grupo");
+
+            entity.HasIndex(e => e.IdDocente, "fkDocente_Grupo_");
+
+            entity.HasIndex(e => e.IdPeriodo, "fkGrupoPeriodo_idx");
+
+            entity.HasIndex(e => e.IdGrupo, "fkGrupo_Docente_idx");
+
+            entity.Property(e => e.Id)
+                .HasColumnType("int(11)")
+                .HasColumnName("id");
+            entity.Property(e => e.IdDocente)
+                .HasColumnType("int(11)")
+                .HasColumnName("idDocente");
+            entity.Property(e => e.IdGrupo)
+                .HasColumnType("int(11)")
+                .HasColumnName("idGrupo");
+            entity.Property(e => e.IdPeriodo)
+                .HasColumnType("int(11)")
+                .HasColumnName("idPeriodo");
+
+            entity.HasOne(d => d.IdDocenteNavigation).WithMany(p => p.DocenteGrupo)
+                .HasForeignKey(d => d.IdDocente)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fkDocente_Grupo_");
+
+            entity.HasOne(d => d.IdGrupoNavigation).WithMany(p => p.DocenteGrupo)
+                .HasForeignKey(d => d.IdGrupo)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fkGrupo_Docente_");
+
+            entity.HasOne(d => d.IdPeriodoNavigation).WithMany(p => p.DocenteGrupo)
+                .HasForeignKey(d => d.IdPeriodo)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("fkGrupoPeriodo");
+        });
+
         modelBuilder.Entity<Grupo>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("grupo");
 
-            entity.HasIndex(e => e.IdDocente, "fkGrupoDocente_Grupo_idx");
-
-            entity.HasIndex(e => e.IdAlumno, "fkGrupo_Alumno_idx");
-
             entity.Property(e => e.Id).HasColumnType("int(11)");
-            entity.Property(e => e.IdAlumno).HasColumnType("int(11)");
-            entity.Property(e => e.IdDocente).HasColumnType("int(11)");
-
-            entity.HasOne(d => d.IdAlumnoNavigation).WithMany(p => p.Grupo)
-                .HasForeignKey(d => d.IdAlumno)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fkGrupo_Alumno");
-
-            entity.HasOne(d => d.IdDocenteNavigation).WithMany(p => p.Grupo)
-                .HasForeignKey(d => d.IdDocente)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("fkGrupo_Docente");
+            entity.Property(e => e.Grado).HasMaxLength(2);
+            entity.Property(e => e.Seccion).HasMaxLength(2);
         });
 
         modelBuilder.Entity<Periodo>(entity =>
@@ -265,32 +329,6 @@ public partial class Sistem21PrimariaContext : DbContext
 
             entity.Property(e => e.Id).HasColumnType("int(11)");
             entity.Property(e => e.Año).HasColumnType("year(4)");
-        });
-
-        modelBuilder.Entity<TipoAsignatura>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PRIMARY");
-
-            entity.ToTable("tipo_asignatura");
-
-            entity.Property(e => e.Id)
-                .HasColumnType("int(11)")
-                .HasColumnName("id");
-            entity.Property(e => e.TipoAsignatura1)
-                .HasMaxLength(20)
-                .HasColumnName("TipoAsignatura");
-        });
-
-        modelBuilder.Entity<Tipodocente>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PRIMARY");
-
-            entity.ToTable("tipodocente");
-
-            entity.Property(e => e.Id)
-                .HasColumnType("int(11)")
-                .HasColumnName("id");
-            entity.Property(e => e.Tipo).HasMaxLength(45);
         });
 
         modelBuilder.Entity<Tutor>(entity =>
@@ -305,6 +343,9 @@ public partial class Sistem21PrimariaContext : DbContext
                 .HasColumnType("int(11)")
                 .HasColumnName("id");
             entity.Property(e => e.Direccion).HasMaxLength(200);
+            entity.Property(e => e.Email)
+                .HasMaxLength(45)
+                .HasColumnName("email");
             entity.Property(e => e.Idusuario)
                 .HasColumnType("int(11)")
                 .HasColumnName("idusuario");
@@ -323,18 +364,12 @@ public partial class Sistem21PrimariaContext : DbContext
 
             entity.ToTable("usuario");
 
-            entity.Property(e => e.Id)
-                .HasColumnType("int(11)")
-                .HasColumnName("id");
-            entity.Property(e => e.Contraseña)
-                .HasColumnType("tinytext")
-                .HasColumnName("contraseña");
-            entity.Property(e => e.Rol)
-                .HasColumnType("int(11)")
-                .HasColumnName("rol");
+            entity.Property(e => e.Id).HasColumnType("int(11)");
+            entity.Property(e => e.Contraseña).HasColumnType("tinytext");
+            entity.Property(e => e.Rol).HasColumnType("int(11)");
             entity.Property(e => e.Usuario1)
                 .HasMaxLength(45)
-                .HasColumnName("usuario");
+                .HasColumnName("Usuario");
         });
 
         OnModelCreatingPartial(modelBuilder);

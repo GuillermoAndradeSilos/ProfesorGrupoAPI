@@ -11,9 +11,15 @@ public partial class Alumno
 
     public string Direccion { get; set; } = null!;
 
+    public string Matricula { get; set; } = null!;
+
+    public int? IdGrupo { get; set; }
+
     public virtual ICollection<AlumnoTutor> AlumnoTutor { get; } = new List<AlumnoTutor>();
 
     public virtual ICollection<Calificacion> Calificacion { get; } = new List<Calificacion>();
 
-    public virtual ICollection<Grupo> Grupo { get; } = new List<Grupo>();
+    public virtual ICollection<DocenteAlumno> DocenteAlumno { get; } = new List<DocenteAlumno>();
+
+    public virtual Grupo? IdGrupoNavigation { get; set; }
 }

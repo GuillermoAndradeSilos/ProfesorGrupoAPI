@@ -43,5 +43,15 @@ namespace ProfesorGrupoAPI.Controllers
             //repository.Insert(a);
             return Ok();
         }
+        [HttpPut("{id}/")]
+        public IActionResult SacarAlumnoGrupo(int id)
+        {
+            var alumno = repository.GetById(id);
+            if (alumno == null)
+                return NotFound();
+            //alumno.Grupo.
+            repository.Update(alumno);
+            return Ok();
+        }
     }
 }

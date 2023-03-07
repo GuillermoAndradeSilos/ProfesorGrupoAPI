@@ -13,6 +13,8 @@ public partial class Tutor
 
     public string Telefono { get; set; } = null!;
 
+    public string? Email { get; set; }
+
     public int Idusuario { get; set; }
 
     public virtual ICollection<AlumnoTutor> AlumnoTutor { get; } = new List<AlumnoTutor>();

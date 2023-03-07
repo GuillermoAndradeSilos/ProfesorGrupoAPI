@@ -9,11 +9,9 @@ public partial class Asignatura
 
     public string Nombre { get; set; } = null!;
 
-    public int IdTipo { get; set; }
+    public int TipoAsignatura { get; set; }
 
     public virtual ICollection<Calificacion> Calificacion { get; } = new List<Calificacion>();
 
     public virtual ICollection<DocenteAsignatura> DocenteAsignatura { get; } = new List<DocenteAsignatura>();
-
-    public virtual TipoAsignatura IdTipoNavigation { get; set; } = null!;
 }

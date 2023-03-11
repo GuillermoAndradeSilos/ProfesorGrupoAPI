@@ -4,7 +4,7 @@ using ProfesorGrupoAPI.Repositories;
 
 namespace ProfesorGrupoAPI.Controllers
 {
-    [Route("apip/{controller}")]
+    [Route("api/{controller}")]
     [ApiController]
     public class TutoresController : ControllerBase
     {

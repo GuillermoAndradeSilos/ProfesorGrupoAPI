@@ -18,7 +18,7 @@ namespace ProfesorGrupoAPI.Controllers
         }
         public IActionResult Get()
         {
-            var alumno = repository.GetAll();
+            var alumno = repository.GetAll().ToList();
             return Ok(alumno);
         }
         [HttpPost]
@@ -42,7 +42,8 @@ namespace ProfesorGrupoAPI.Controllers
             //TimeSpan edadresultante = DateTime.Now - aja;
             //int anios = (int)(edadresultante.TotalDays / 365.25);
             //if(anios < a.Edad)
-            //    return BadRequest("La fecha de nacimiento no concuerda con la edad del alumno");S
+            //    return BadRequest("La fecha de nacimiento no concuerda con la edad del alumno");
+            //https://localhost:44311/api/alumnos?Nombre=Prueba&Direccion=Aja si&Matricula=111G1111&FechaNacimiento=2001/05/11&Edad=10&Curp=asd4567&Peso=10&Estatura=10&Alergico=Si&idGrupo=1&Id=0
             a.Id = 0;
             repository.Insert(a);
             return Ok();

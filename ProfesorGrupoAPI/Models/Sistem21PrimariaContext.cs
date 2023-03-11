@@ -57,7 +57,10 @@ public partial class Sistem21PrimariaContext : DbContext
             entity.HasIndex(e => e.IdGrupo, "fkAlumnoGrupo_idx");
 
             entity.Property(e => e.Id).HasColumnType("int(11)");
+            entity.Property(e => e.Alergico).HasColumnType("tinytext");
+            entity.Property(e => e.Curp).HasMaxLength(20);
             entity.Property(e => e.Direccion).HasMaxLength(200);
+            entity.Property(e => e.Edad).HasColumnType("int(11)");
             entity.Property(e => e.IdGrupo)
                 .HasColumnType("int(11)")
                 .HasColumnName("idGrupo");
@@ -66,6 +69,7 @@ public partial class Sistem21PrimariaContext : DbContext
 
             entity.HasOne(d => d.IdGrupoNavigation).WithMany(p => p.Alumno)
                 .HasForeignKey(d => d.IdGrupo)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("fkAlumnoGrupo");
         });
 
@@ -342,6 +346,7 @@ public partial class Sistem21PrimariaContext : DbContext
             entity.Property(e => e.Id)
                 .HasColumnType("int(11)")
                 .HasColumnName("id");
+            entity.Property(e => e.Celular).HasMaxLength(10);
             entity.Property(e => e.Direccion).HasMaxLength(200);
             entity.Property(e => e.Email)
                 .HasMaxLength(45)
@@ -350,6 +355,7 @@ public partial class Sistem21PrimariaContext : DbContext
                 .HasColumnType("int(11)")
                 .HasColumnName("idusuario");
             entity.Property(e => e.Nombre).HasMaxLength(200);
+            entity.Property(e => e.Ocupacion).HasColumnType("int(11)");
             entity.Property(e => e.Telefono).HasMaxLength(10);
 
             entity.HasOne(d => d.IdusuarioNavigation).WithMany(p => p.Tutor)

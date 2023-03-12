@@ -20,7 +20,7 @@ namespace ProfesorGrupoAPI.Controllers
         }
         public IActionResult Get()
         {
-            var calificacion = repositorycalificaciones.GetAll();
+            var calificacion = repositorycalificaciones.GetAll().ToList();
             return Ok(calificacion);
         }
         [HttpPost]

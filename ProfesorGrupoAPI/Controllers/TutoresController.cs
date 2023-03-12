@@ -20,7 +20,7 @@ namespace ProfesorGrupoAPI.Controllers
         }
         public IActionResult Get()
         {
-            var tutores = repositorytutor.GetAll();
+            var tutores = repositorytutor.GetAll().ToList();
             return Ok(tutores);
         }
         [HttpPost]

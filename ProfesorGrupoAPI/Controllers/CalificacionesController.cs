@@ -18,11 +18,18 @@ namespace ProfesorGrupoAPI.Controllers
             repositorycalificaciones = new Repository<Calificacion>(context);
             repositoryalumno = new Repository<Alumno>(context);
         }
+        //[HttpGet]
         public IActionResult Get()
         {
             var calificacion = repositorycalificaciones.GetAll();
             return Ok(calificacion);
         }
+        //[HttpGet("{id}:int")]
+        //public IActionResult Get(int id)
+        //{
+        //    var calificacion = repositorycalificaciones.GetById(id);
+        //    return Ok(calificacion);
+        //}
         [HttpPost]
         public IActionResult Post(Calificacion c)
         {

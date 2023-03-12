@@ -16,11 +16,18 @@ namespace ProfesorGrupoAPI.Controllers
             this.context = cx;
             repository = new Repository<Alumno>(context);
         }
+        //[HttpGet]
         public IActionResult Get()
         {
             var alumno = repository.GetAll().ToList();
             return Ok(alumno);
         }
+        //[HttpGet("{id}:int")]
+        //public IActionResult GetAlumno(int id)
+        //{
+        //    var alumno = repository.GetById(id);
+        //    return Ok(alumno);
+        //}
         [HttpPost]
         public IActionResult Post(Alumno a)
         {

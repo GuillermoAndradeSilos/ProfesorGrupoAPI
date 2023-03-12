@@ -18,18 +18,18 @@ namespace ProfesorGrupoAPI.Controllers
             repositoryalumno = new Repository<Alumno>(context);
             repositorytutor = new Repository<Tutor>(context);
         }
-        //[HttpGet]
+        [HttpGet]
         public IActionResult Get()
         {
             var tutores = repositorytutor.GetAll().ToList();
             return Ok(tutores);
         }
-        //[HttpGet("{id}:int")]
-        //public IActionResult GetTutor(int id)
-        //{
-        //    var tutores = repositorytutor.GetAll();
-        //    return Ok(tutores);
-        //}
+        [HttpGet("{id}:int")]
+        public IActionResult GetTutor(int id)
+        {
+            var tutores = repositorytutor.GetAll();
+            return Ok(tutores);
+        }
         [HttpPost]
         public IActionResult Post(Tutor t)
         {
